@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5437/order_db
+    url: jdbc:postgresql://localhost:5436/product_db
     username: root
     password: root
     driver-class-name: org.postgresql.Driver
@@ -9,4 +9,4 @@ spring:
       ddl-auto: update
     show-sql: true
 server:
-  port: 8085
+  port: 8084
