@@ -10,3 +10,8 @@ spring:
     show-sql: true
 server:
   port: 8084
+
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: alpha

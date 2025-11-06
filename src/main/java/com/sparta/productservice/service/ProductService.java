@@ -8,7 +8,9 @@ import com.sparta.productservice.entity.ProductEntity;
 import com.sparta.productservice.entity.enums.ProductStatus;
 import com.sparta.productservice.repository.ProductRepository;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,9 @@ import java.util.UUID;
 public class ProductService {
 
 	private final ProductRepository productRepository;
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@Transactional
 	public ProductResponseDto createProduct(ProductRequestDto requestDto) {
@@ -71,7 +76,7 @@ public class ProductService {
 			.price(product.getProductPrice())
 			.stock(product.getStock())
 			.status(product.getProductStatus().name())
-			.hubName("허브명 예시")
+			.hubId(product.getHubId())
 			.vendorName(product.getVendorName())
 			.description(product.getDescription())
 			.createdAt(product.getCreatedAt())
@@ -90,5 +95,21 @@ public class ProductService {
 		productRepository.saveAndFlush(product);
 
 		return "상품 승인 완료 (" + product.getProductName() + ")";
+	}
+
+	@Transactional
+	public ProductResponseDto denyProduct(UUID productId) {
+		ProductEntity product = productRepository.findById(productId)
+			.orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
+
+		product.updateStatus(ProductStatus.DENIED);
+
+		productRepository.saveAndFlush(product);
+
+		return ProductResponseDto.builder()
+			.productId(product.getId().toString())
+			.status(product.getProductStatus().name())
+			.message("상품이 거절되었습니다.")
+			.build();
 	}
 }

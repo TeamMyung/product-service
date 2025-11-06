@@ -1,6 +1,8 @@
 package com.sparta.productservice.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +18,7 @@ public class ProductDetailResponseDto {
 	private int price;
 	private int stock;
 	private String status;
-	private String hubName;
+	private UUID hubId;
 	private String vendorName;
 	private String description;
 	private LocalDateTime createdAt;
