@@ -1,5 +1,7 @@
 package com.sparta.productservice.dto.response;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,4 +13,5 @@ public class ProductResponseDto {
 	private String productId;
 	private String status;
 	private String message;
+	private LocalDateTime createdAt;
 }
