@@ -64,4 +64,8 @@ public class ProductEntity extends BaseEntity {
 		this.hubId = hubId;
 		this.description = description;
 	}
+
+	public void updateStatus(ProductStatus status) {
+		this.productStatus = status;
+	}
 }

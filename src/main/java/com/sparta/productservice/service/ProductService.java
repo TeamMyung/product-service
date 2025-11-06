@@ -2,6 +2,7 @@ package com.sparta.productservice.service;
 
 import com.sparta.productservice.dto.request.ProductRequestDto;
 import com.sparta.productservice.dto.request.ProductUpdateRequestDto;
+import com.sparta.productservice.dto.response.ProductDetailResponseDto;
 import com.sparta.productservice.dto.response.ProductResponseDto;
 import com.sparta.productservice.entity.ProductEntity;
 import com.sparta.productservice.entity.enums.ProductStatus;
@@ -59,5 +60,35 @@ public class ProductService {
 
 		productRepository.save(product);
 	}
-}
 
+	@Transactional(readOnly = true)
+	public ProductDetailResponseDto getProductDetail(UUID productId) {
+		ProductEntity product = productRepository.findById(productId)
+			.orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
+
+		return ProductDetailResponseDto.builder()
+			.productName(product.getProductName())
+			.price(product.getProductPrice())
+			.stock(product.getStock())
+			.status(product.getProductStatus().name())
+			.hubName("허브명 예시")
+			.vendorName(product.getVendorName())
+			.description(product.getDescription())
+			.createdAt(product.getCreatedAt())
+			.updatedAt(product.getUpdatedAt())
+			.build();
+	}
+
+	@Transactional
+	public String approveProduct(UUID productId, Long adminId) { // JWT 되면 변경
+		ProductEntity product = productRepository.findById(productId)
+			.orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
+
+		product.approve(adminId); // BaseEntity의 approve() 호출
+		product.updateStatus(ProductStatus.APPROVED);
+
+		productRepository.saveAndFlush(product);
+
+		return "상품 승인 완료 (" + product.getProductName() + ")";
+	}
+}

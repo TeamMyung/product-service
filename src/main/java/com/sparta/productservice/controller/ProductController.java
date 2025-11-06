@@ -3,15 +3,18 @@ package com.sparta.productservice.controller;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sparta.productservice.dto.request.ProductRequestDto;
 import com.sparta.productservice.dto.request.ProductUpdateRequestDto;
+import com.sparta.productservice.dto.response.ProductDetailResponseDto;
 import com.sparta.productservice.dto.response.ProductResponseDto;
 import com.sparta.productservice.service.ProductService;
 
@@ -41,5 +44,20 @@ public class ProductController {
 				public final String message = "업데이트 완료";
 			}
 		);
+	}
+
+	@GetMapping("/{productId}")
+	public ResponseEntity<ProductDetailResponseDto> getProductDetail(
+		@PathVariable UUID productId
+	) {
+		return ResponseEntity.ok(productService.getProductDetail(productId));
+	}
+
+	@PatchMapping("/{productId}/approve")
+	public ResponseEntity<String> approveProduct(
+		@PathVariable UUID productId,
+		@RequestParam Long adminId //JWT되면 변경
+	) {
+		return ResponseEntity.ok(productService.approveProduct(productId, adminId));
 	}
 }
