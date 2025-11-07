@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.util.UUID;
 
 @Service
@@ -54,7 +55,6 @@ public class ProductService {
 		ProductEntity product = productRepository.findById(productId)
 			.orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
 
-		// 값 변경
 		product.updateProduct(
 			requestDto.getProductName(),
 			requestDto.getStock(),
@@ -80,16 +80,17 @@ public class ProductService {
 			.vendorName(product.getVendorName())
 			.description(product.getDescription())
 			.createdAt(product.getCreatedAt())
+			.approvedAt(product.getApprovedAt())
 			.updatedAt(product.getUpdatedAt())
 			.build();
 	}
 
 	@Transactional
-	public String approveProduct(UUID productId, Long adminId) { // JWT 되면 변경
+	public String approveProduct(UUID productId, BigInteger userId) { // JWT 되면 변경
 		ProductEntity product = productRepository.findById(productId)
 			.orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
 
-		product.approve(adminId); // BaseEntity의 approve() 호출
+		product.approve(userId);
 		product.updateStatus(ProductStatus.APPROVED);
 
 		productRepository.saveAndFlush(product);

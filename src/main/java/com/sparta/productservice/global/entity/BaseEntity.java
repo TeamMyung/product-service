@@ -31,12 +31,4 @@ public class BaseEntity {
 
 	private LocalDateTime deletedAt;
 	private Long deletedBy;
-
-	private LocalDateTime approvedAt;
-	private Long approvedBy;
-
-	public void approve(Long userId) {
-		this.approvedAt = LocalDateTime.now();
-		this.approvedBy = userId;
-	}
 }

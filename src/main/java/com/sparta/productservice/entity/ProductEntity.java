@@ -1,5 +1,7 @@
 package com.sparta.productservice.entity;
 
+import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.sparta.productservice.entity.enums.ProductStatus;
@@ -54,6 +56,14 @@ public class ProductEntity extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private ProductStatus productStatus;
+
+	private LocalDateTime approvedAt;
+	private BigInteger approvedBy;
+
+	public void approve(BigInteger userId) {
+		this.approvedAt = LocalDateTime.now();
+		this.approvedBy = userId;
+	}
 
 	public void updateProduct(String productName, int stock, int productPrice, UUID hubId, String description) {
 		if (productName != null && !productName.isBlank()) {

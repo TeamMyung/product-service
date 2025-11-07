@@ -48,7 +48,7 @@ public class ProductListResponseDto {
 		this.createdAt = createdAt;
 	}
 
-	public static ProductListResponseDto fromEntity(com.sparta.productservice.entity.ProductEntity product) {
+	public static ProductListResponseDto fromEntity(ProductEntity product) {
 		return new ProductListResponseDto(
 			product.getId(),
 			product.getHubId(),

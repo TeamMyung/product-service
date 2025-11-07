@@ -1,5 +1,6 @@
 package com.sparta.productservice.controller;
 
+import java.math.BigInteger;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -52,8 +53,8 @@ public class ProductController {
 	@PatchMapping("/{productId}/approve")
 	public ResponseEntity<ApiResponse<String>> approveProduct(
 		@Parameter(description = "상품 UUID") @PathVariable UUID productId,
-		@RequestParam Long adminId) {
-		String result = productService.approveProduct(productId, adminId);
+		@RequestParam BigInteger userId) {
+		String result = productService.approveProduct(productId, userId);
 		return ResponseEntity.ok(new ApiResponse<>(result));
 	}
 
@@ -61,7 +62,7 @@ public class ProductController {
 	@PatchMapping("/{productId}/denied")
 	public ResponseEntity<ApiResponse<ProductResponseDto>> denyProduct(
 		@Parameter(description = "상품 UUID") @PathVariable UUID productId,
-		@RequestParam Long adminId) {
+		@RequestParam BigInteger userId) {
 		ProductResponseDto response = productService.denyProduct(productId);
 		return ResponseEntity.ok(new ApiResponse<>(response));
 	}

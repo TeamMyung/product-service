@@ -13,20 +13,22 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(EntityNotFoundException.class)
 	public ResponseEntity<ApiResponse<?>> handleNotFound(EntityNotFoundException e) {
-		return ResponseEntity.status(ErrorCode.PRODUCT_NOT_FOUND.getStatus())
+		return ResponseEntity
+			.status(ErrorCode.PRODUCT_NOT_FOUND.getStatus().value())
 			.body(new ApiResponse<>(ErrorCode.PRODUCT_NOT_FOUND));
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<ApiResponse<?>> handleBadRequest(IllegalArgumentException e) {
-		return ResponseEntity.status(ErrorCode.INVALID_REQUEST.getStatus())
+		return ResponseEntity
+			.status(ErrorCode.INVALID_REQUEST.getStatus().value())
 			.body(new ApiResponse<>(ErrorCode.INVALID_REQUEST));
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ApiResponse<?>> handleGeneral(Exception e) {
-		return ResponseEntity.status(ErrorCode.INTERNAL_ERROR.getStatus())
+		return ResponseEntity
+			.status(ErrorCode.INTERNAL_ERROR.getStatus().value())
 			.body(new ApiResponse<>(ErrorCode.INTERNAL_ERROR));
 	}
 }
-

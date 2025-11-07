@@ -5,6 +5,7 @@ import com.sparta.productservice.global.exception.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@Getter
 public class ApiResponse<T> {
 
 	private int status;
