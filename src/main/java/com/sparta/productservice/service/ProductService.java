@@ -6,6 +6,8 @@ import com.sparta.productservice.dto.response.ProductDetailResponseDto;
 import com.sparta.productservice.dto.response.ProductResponseDto;
 import com.sparta.productservice.entity.ProductEntity;
 import com.sparta.productservice.entity.enums.ProductStatus;
+import com.sparta.productservice.global.exception.CustomException;
+import com.sparta.productservice.global.exception.ErrorCode;
 import com.sparta.productservice.repository.ProductRepository;
 
 import jakarta.persistence.EntityManager;
@@ -29,47 +31,55 @@ public class ProductService {
 
 	@Transactional
 	public ProductResponseDto createProduct(ProductRequestDto requestDto) {
-		ProductEntity product = ProductEntity.builder()
-			.productName(requestDto.getName())
-			.vendorId(UUID.fromString(requestDto.getVendorId()))
-			.vendorName(requestDto.getVendorName())
-			.hubId(UUID.fromString(requestDto.getHubId()))
-			.stock(requestDto.getStock())
-			.productPrice(requestDto.getProductPrice())
-			.description(requestDto.getDescription())
-			.productStatus(ProductStatus.PENDING)
-			.build();
+		try {
+			ProductEntity product = ProductEntity.builder()
+				.productName(requestDto.getName())
+				.vendorId(UUID.fromString(requestDto.getVendorId()))
+				.vendorName(requestDto.getVendorName())
+				.hubId(UUID.fromString(requestDto.getHubId()))
+				.stock(requestDto.getStock())
+				.productPrice(requestDto.getProductPrice())
+				.description(requestDto.getDescription())
+				.productStatus(ProductStatus.PENDING)
+				.build();
 
-		ProductEntity saved = productRepository.save(product);
+			ProductEntity saved = productRepository.save(product);
 
-		return ProductResponseDto.builder()
-			.productId(saved.getId().toString())
-			.status(saved.getProductStatus().name())
-			.message("상품 등록 완료, 승인 대기 중입니다.")
-			.createdAt(saved.getCreatedAt())
-			.build();
+			return ProductResponseDto.builder()
+				.productId(saved.getId().toString())
+				.status(saved.getProductStatus().name())
+				.message("상품 등록 완료, 승인 대기 중입니다.")
+				.createdAt(saved.getCreatedAt())
+				.build();
+
+		} catch (Exception e) {
+			throw new CustomException(ErrorCode.PRODUCT_CREATION_FAILED);
+		}
 	}
 
 	@Transactional
 	public void updateProduct(UUID productId, ProductUpdateRequestDto requestDto) {
 		ProductEntity product = productRepository.findById(productId)
-			.orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND.getDetails()));
 
-		product.updateProduct(
-			requestDto.getProductName(),
-			requestDto.getStock(),
-			requestDto.getProductPrice(),
-			UUID.fromString(requestDto.getHubId()),
-			requestDto.getDescription()
-		);
-
-		productRepository.save(product);
+		try {
+			product.updateProduct(
+				requestDto.getProductName(),
+				requestDto.getStock(),
+				requestDto.getProductPrice(),
+				UUID.fromString(requestDto.getHubId()),
+				requestDto.getDescription()
+			);
+			productRepository.save(product);
+		} catch (Exception e) {
+			throw new CustomException(ErrorCode.PRODUCT_UPDATE_FAILED);
+		}
 	}
 
 	@Transactional(readOnly = true)
 	public ProductDetailResponseDto getProductDetail(UUID productId) {
 		ProductEntity product = productRepository.findById(productId)
-			.orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND.getDetails()));
 
 		return ProductDetailResponseDto.builder()
 			.productName(product.getProductName())
@@ -88,11 +98,14 @@ public class ProductService {
 	@Transactional
 	public String approveProduct(UUID productId, BigInteger userId) { // JWT 되면 변경
 		ProductEntity product = productRepository.findById(productId)
-			.orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
+			.orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+
+		if (product.getProductStatus() == ProductStatus.APPROVED) {
+			throw new CustomException(ErrorCode.PRODUCT_ALREADY_APPROVED);
+		}
 
 		product.approve(userId);
 		product.updateStatus(ProductStatus.APPROVED);
-
 		productRepository.saveAndFlush(product);
 
 		return "상품 승인 완료 (" + product.getProductName() + ")";
@@ -101,10 +114,13 @@ public class ProductService {
 	@Transactional
 	public ProductResponseDto denyProduct(UUID productId) {
 		ProductEntity product = productRepository.findById(productId)
-			.orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
+			.orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+
+		if (product.getProductStatus() == ProductStatus.DENIED) {
+			throw new CustomException(ErrorCode.PRODUCT_ALREADY_DENIED);
+		}
 
 		product.updateStatus(ProductStatus.DENIED);
-
 		productRepository.saveAndFlush(product);
 
 		return ProductResponseDto.builder()
