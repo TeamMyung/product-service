@@ -4,6 +4,10 @@ import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+
 import com.sparta.productservice.entity.enums.ProductStatus;
 import com.sparta.productservice.global.entity.BaseEntity;
 
@@ -26,6 +30,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Table(name = "p_product")
+@FilterDef(
+	name = "deletedFilter",
+	parameters = @ParamDef(name = "isDeleted", type = Boolean.class)
+)
+@Filter(
+	name = "deletedFilter",
+	condition = "(:isDeleted = false AND deleted_at IS NULL) OR (:isDeleted = true)"
+)
 public class ProductEntity extends BaseEntity {
 
 	@Id
@@ -77,5 +89,10 @@ public class ProductEntity extends BaseEntity {
 
 	public void updateStatus(ProductStatus status) {
 		this.productStatus = status;
+	}
+
+	public void softDelete(Long deletedBy) {
+		this.setDeletedAt(LocalDateTime.now());
+		this.setDeletedBy(deletedBy);
 	}
 }
