@@ -66,4 +66,16 @@ public class ProductController {
 		ProductResponseDto response = productService.denyProduct(productId);
 		return ResponseEntity.ok(new ApiResponse<>(response));
 	}
+
+	@Operation(summary = "상품 삭제 API", description = "Master 또는 Hub 관리자가 상품을 논리적으로 삭제합니다.")
+	@DeleteMapping("/{productId}")
+	public ResponseEntity<ApiResponse<String>> deleteProduct(
+		@Parameter(description = "상품 ID") @PathVariable UUID productId,
+		@Parameter(description = "요청자 ID") @RequestParam BigInteger userId,
+		@Parameter(description = "요청자 역할 (MASTER/HUB)") @RequestParam String role,
+		@Parameter(description = "허브 ID (Hub 관리자만 필수)") @RequestParam(required = false) UUID hubId
+	) {
+		productService.deleteProduct(productId, userId, role, hubId);
+		return ResponseEntity.ok(new ApiResponse<>("상품이 삭제되었습니다."));
+	}
 }

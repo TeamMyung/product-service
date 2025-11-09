@@ -25,6 +25,9 @@ public enum ErrorCode {
 	PRODUCT_UPDATE_FAILED(5105, HttpStatus.INTERNAL_SERVER_ERROR, "상품 수정 중 오류가 발생했습니다."),
 	PRODUCT_LIST_EMPTY(5106, HttpStatus.NOT_FOUND, "조건에 맞는 상품이 존재하지 않습니다."),
 	PRODUCT_ACCESS_DENIED(5107, HttpStatus.FORBIDDEN, "상품에 대한 접근 권한이 없습니다."),
+	PRODUCT_ALREADY_DELETED(5108, HttpStatus.BAD_REQUEST, "이미 삭제된 상품입니다."),
+	PRODUCT_DELETE_FORBIDDEN(5109, HttpStatus.FORBIDDEN, "해당 상품에 대한 삭제 권한이 없습니다."),
+	PRODUCT_DELETE_FAILED(5110, HttpStatus.INTERNAL_SERVER_ERROR, "상품 삭제 중 오류가 발생했습니다."),
 	// Hub
 	HUB_NOT_FOUND(5200, HttpStatus.NOT_FOUND, "허브를 찾을 수 없습니다."),
 	HUB_UNAUTHORIZED(5201, HttpStatus.FORBIDDEN, "허브 접근 권한이 없습니다."),

@@ -129,4 +129,33 @@ public class ProductService {
 			.message("상품이 거절되었습니다.")
 			.build();
 	}
+
+	@Transactional
+	public void deleteProduct(UUID productId, BigInteger userId, String role, UUID hubId) {
+		ProductEntity product = productRepository.findById(productId)
+			.orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+		//권한 검증
+		boolean isAdmin = "MASTER".equalsIgnoreCase(role);
+		boolean isHubManager = "HUB_MANAGER".equalsIgnoreCase(role);
+
+		if (!isAdmin && !isHubManager) {
+			throw new CustomException(ErrorCode.PRODUCT_DELETE_FORBIDDEN);
+		}
+
+		if (isHubManager && !product.getHubId().equals(hubId)) {
+			throw new CustomException(ErrorCode.PRODUCT_DELETE_FORBIDDEN);
+		}
+
+		if (product.getDeletedAt() != null) {
+			throw new CustomException(ErrorCode.PRODUCT_ALREADY_DELETED);
+		}
+
+		// 논리 삭제 처리
+		try {
+			product.softDelete(userId.longValue());
+			productRepository.save(product);
+		} catch (Exception e) {
+			throw new CustomException(ErrorCode.PRODUCT_DELETE_FAILED);
+		}
+	}
 }
