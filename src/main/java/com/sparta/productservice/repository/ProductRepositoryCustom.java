@@ -9,4 +9,5 @@ import java.util.UUID;
 
 public interface ProductRepositoryCustom {
 	Page<ProductListResponseDto> search(UUID hubId, ProductStatus status, Pageable pageable);
+	Page<ProductListResponseDto> searchByVendor(UUID vendorId, ProductStatus status, Pageable pageable);
 }

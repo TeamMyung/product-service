@@ -54,4 +54,36 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
 		return new PageImpl<>(content, pageable, total);
 	}
+
+	@Override
+	public Page<ProductListResponseDto> searchByVendor(UUID vendorId, ProductStatus status, Pageable pageable) {
+		BooleanBuilder where = new BooleanBuilder();
+		if (vendorId != null) where.and(productEntity.vendorId.eq(vendorId)); // vendor 기준 필터
+		if (status != null) where.and(productEntity.productStatus.eq(status));
+
+		List<ProductListResponseDto> content = query
+			.select(new QProductListResponseDto(
+				productEntity.id,
+				productEntity.hubId,
+				productEntity.vendorName,
+				productEntity.productName,
+				productEntity.productStatus,
+				productEntity.productPrice,
+				productEntity.stock,
+				productEntity.createdAt
+			))
+			.from(productEntity)
+			.where(where)
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(productEntity.createdAt.desc())
+			.fetch();
+
+		long total = query.select(productEntity.count())
+			.from(productEntity)
+			.where(where)
+			.fetchOne();
+
+		return new PageImpl<>(content, pageable, total);
+	}
 }
