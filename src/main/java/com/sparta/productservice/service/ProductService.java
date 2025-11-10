@@ -173,4 +173,13 @@ public class ProductService {
 		product.decreaseStock(quantity);
 		productRepository.save(product);
 	}
+
+	@Transactional
+	public void increaseStock(UUID productId, int quantity) {
+		ProductEntity product = productRepository.findById(productId)
+			.orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+
+		product.increaseStock(quantity);
+		productRepository.save(product);
+	}
 }

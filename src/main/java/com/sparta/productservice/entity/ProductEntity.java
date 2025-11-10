@@ -23,9 +23,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -100,4 +102,7 @@ public class ProductEntity extends BaseEntity {
 		this.stock -= quantity;
 	}
 
+	public void increaseStock(int quantity) {
+		this.stock += quantity;
+	}
 }
