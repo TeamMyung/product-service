@@ -13,6 +13,8 @@ import com.sparta.productservice.global.exception.CustomException;
 import com.sparta.productservice.global.exception.ErrorCode;
 import com.sparta.productservice.repository.ProductRepository;
 
+import jakarta.persistence.EntityManager;
+import org.hibernate.Session;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,7 +23,13 @@ public class ProductPageService {
 
 	private final ProductRepository productRepository;
 
+	private final EntityManager entityManager;
+
 	public Page<ProductListResponseDto> getAllProducts(UUID hubId, String status, int page, int size) {
+
+		Session session = entityManager.unwrap(Session.class);
+		session.disableFilter("deletedFilter");
+
 		Pageable pageable = PageRequest.of(page, size);
 		ProductStatus productStatus = parseStatus(status);
 
@@ -34,6 +42,9 @@ public class ProductPageService {
 	}
 
 	public Page<ProductListResponseDto> getHubProducts(UUID hubId, String status, int page, int size) {
+		Session session = entityManager.unwrap(Session.class);
+		session.enableFilter("deletedFilter").setParameter("isDeleted", false);
+
 		Pageable pageable = PageRequest.of(page, size);
 		ProductStatus productStatus = parseStatus(status);
 
@@ -46,6 +57,9 @@ public class ProductPageService {
 	}
 
 	public Page<ProductListResponseDto> getVendorProducts(UUID vendorId, String status, int page, int size) {
+		Session session = entityManager.unwrap(Session.class);
+		session.enableFilter("deletedFilter").setParameter("isDeleted", false);
+
 		Pageable pageable = PageRequest.of(page, size);
 		ProductStatus productStatus = parseStatus(status);
 

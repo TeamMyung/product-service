@@ -95,4 +95,9 @@ public class ProductEntity extends BaseEntity {
 		this.setDeletedAt(LocalDateTime.now());
 		this.setDeletedBy(deletedBy);
 	}
+
+	public void decreaseStock(int quantity) {
+		this.stock -= quantity;
+	}
+
 }
