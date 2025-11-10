@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class ProductPageController {
 
 	private final ProductPageService productPageService;
-
+//권한 추가
 	@Operation(summary = "관리자 상품 조회 API", description = "관리자가 모든 상품을 조회합니다.")
 	@GetMapping("/admin")
 	public ResponseEntity<Page<ProductListResponseDto>> getAllProducts(

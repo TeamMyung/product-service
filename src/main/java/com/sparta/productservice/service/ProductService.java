@@ -82,11 +82,13 @@ public class ProductService {
 			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.PRODUCT_NOT_FOUND.getDetails()));
 
 		return ProductDetailResponseDto.builder()
+			.productId(product.getId())
 			.productName(product.getProductName())
 			.price(product.getProductPrice())
 			.stock(product.getStock())
 			.status(product.getProductStatus().name())
 			.hubId(product.getHubId())
+			.vendorId(product.getVendorId())
 			.vendorName(product.getVendorName())
 			.description(product.getDescription())
 			.createdAt(product.getCreatedAt())
@@ -157,5 +159,18 @@ public class ProductService {
 		} catch (Exception e) {
 			throw new CustomException(ErrorCode.PRODUCT_DELETE_FAILED);
 		}
+	}
+
+	@Transactional
+	public void decreaseStock(UUID productId, int quantity) {
+		ProductEntity product = productRepository.findById(productId)
+			.orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
+
+		if (product.getStock() < quantity) {
+			throw new IllegalStateException("재고가 부족합니다.");
+		}
+
+		product.decreaseStock(quantity);
+		productRepository.save(product);
 	}
 }

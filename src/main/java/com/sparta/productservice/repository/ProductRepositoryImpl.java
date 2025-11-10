@@ -33,12 +33,14 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 			.select(new QProductListResponseDto(
 				productEntity.id,
 				productEntity.hubId,
+				productEntity.vendorId,
 				productEntity.vendorName,
 				productEntity.productName,
 				productEntity.productStatus,
 				productEntity.productPrice,
 				productEntity.stock,
-				productEntity.createdAt
+				productEntity.createdAt,
+				productEntity.deletedAt
 			))
 			.from(productEntity)
 			.where(where)
@@ -65,12 +67,14 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 			.select(new QProductListResponseDto(
 				productEntity.id,
 				productEntity.hubId,
+				productEntity.vendorId,
 				productEntity.vendorName,
 				productEntity.productName,
 				productEntity.productStatus,
 				productEntity.productPrice,
 				productEntity.stock,
-				productEntity.createdAt
+				productEntity.createdAt,
+				productEntity.deletedAt
 			))
 			.from(productEntity)
 			.where(where)
