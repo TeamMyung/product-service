@@ -7,6 +7,8 @@ import java.util.UUID;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import com.sparta.productservice.entity.enums.ProductStatus;
 import com.sparta.productservice.global.entity.BaseEntity;
@@ -32,14 +34,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Table(name = "p_product")
-@FilterDef(
-	name = "deletedFilter",
-	parameters = @ParamDef(name = "isDeleted", type = Boolean.class)
-)
-@Filter(
-	name = "deletedFilter",
-	condition = "(:isDeleted = false AND deleted_at IS NULL) OR (:isDeleted = true)"
-)
+@SQLDelete(sql = "UPDATE p_product SET deleted_at = NOW() WHERE id = ?") // ✅ JPA delete 호출 시 soft delete 수행
+@Where(clause = "deleted_at IS NULL")
 public class ProductEntity extends BaseEntity {
 
 	@Id
