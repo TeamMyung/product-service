@@ -28,6 +28,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 		BooleanBuilder where = new BooleanBuilder();
 		if (hubId != null) where.and(productEntity.hubId.eq(hubId));
 		if (status != null) where.and(productEntity.productStatus.eq(status));
+		//soft delete 제외 조건
+		where.and(productEntity.deletedAt.isNull());
 
 		List<ProductListResponseDto> content = query
 			.select(new QProductListResponseDto(
@@ -62,6 +64,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 		BooleanBuilder where = new BooleanBuilder();
 		if (vendorId != null) where.and(productEntity.vendorId.eq(vendorId)); // vendor 기준 필터
 		if (status != null) where.and(productEntity.productStatus.eq(status));
+		//soft delete 제외 조건
+		where.and(productEntity.deletedAt.isNull());
 
 		List<ProductListResponseDto> content = query
 			.select(new QProductListResponseDto(
